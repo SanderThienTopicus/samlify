@@ -72,7 +72,7 @@ export class ServiceProvider extends Entity {
       return {
         ...context,
         relayState: this.entitySetting.relayState,
-        entityEndpoint: idp.entityMeta.getSingleSignOnService(binding) as string,
+        entityEndpoint: idp.entityMeta.getSingleSignOnService(binding),
         type: 'SAMLRequest',
       };
     }
