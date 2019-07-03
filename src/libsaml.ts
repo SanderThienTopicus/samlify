@@ -13,8 +13,8 @@ import * as nrsa from 'node-rsa';
 import { SignedXml, FileKeyInfo } from 'xml-crypto';
 import * as xmlenc from '@authenio/xml-encryption';
 import { extract } from './extractor';
-import { getValidatorModule, SchemaValidator } from './schema-validator';
 import camelCase from 'camelcase';
+import { getContext } from './api';
 
 const signatureAlgorithms = algorithms.signature;
 const digestAlgorithms = algorithms.digest;
@@ -343,7 +343,7 @@ const libSaml = () => {
         } else if (opts.cert) {
 
           const certificateNode = select(".//*[local-name(.)='X509Certificate']", signatureNode) as any;
-          
+
           // certificate in metadata
           let metadataCert: any = opts.cert.getX509Certificate(certUse.signing);
           if (typeof metadataCert === 'string') {
@@ -354,7 +354,7 @@ const libSaml = () => {
           }
           metadataCert = metadataCert.map(utility.normalizeCerString);
 
-          // use the first 
+          // use the first
           let selectedCert = metadataCert[0];
           // no certificate node in response
           if (certificateNode.length !== 0) {
@@ -366,7 +366,7 @@ const libSaml = () => {
           if (selectedCert === null) {
             throw new Error('NO_SELECTED_CERTIFICATE');
           }
-          if (metadataCert.length >= 1 && !metadataCert.find(cert => cert === selectedCert)) {
+          if (metadataCert.length >= 1 && !metadataCert.find(cert => cert.trim() === selectedCert.trim())) {
             // keep this restriction for rolling certificate usage
             // to make sure the response certificate is one of those specified in metadata
             throw new Error('ERROR_UNMATCH_CERTIFICATE_DECLARATION_IN_METADATA');
@@ -600,18 +600,31 @@ const libSaml = () => {
      * @desc Check if the xml string is valid and bounded
      */
     async isValidXml(input: string) {
+
+      // check if global api contains the validate function
+      const { validate } = getContext();
+
+      /**
+       * user can write a validate function that always returns
+       * a resolved promise and skip the validator even in 
+       * production, user will take the responsibility if 
+       * they intend to skip the validation
+       */
+      if (!validate) {
+
+        // otherwise, an error will be thrown
+        return Promise.reject('Your application is potentially vulnerable because there is no validation function is found. Please read the documentation on how to setup the validator. (https://samlify.js.org/#/schema-validator)');
+
+      }
+
       try {
-        await mod!.validate(input);
-        return Promise.resolve();
+        return await validate(input);
       } catch (e) {
         throw e;
       }
+
     },
   };
 };
-
-// load the validator module before the function runtime
-let mod: SchemaValidator | null = null;
-(async () => mod = await getValidatorModule())();
 
 export default libSaml();

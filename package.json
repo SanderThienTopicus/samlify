@@ -33,8 +33,10 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@authenio/xml-encryption": "^0.11.2",
     "camelcase": "^5.2.0",
     "deflate-js": "^0.2.3",
+    "global": "^4.3.2",
     "node-forge": "^0.7.5",
     "node-rsa": "^0.4.2",
     "uuid": "^3.3.2",
@@ -42,11 +44,6 @@
     "xml-crypto": "^1.1.4",
     "xmldom": "^0.1.19",
     "xpath": "^0.0.27"
-  },
-  "optionalDependencies": {
-    "@authenio/xml-encryption": "^0.11.2",
-    "libxml-xsd": "^0.5.2",
-    "node-xmllint": "^1.0.0"
   },
   "devDependencies": {
     "@types/camelcase": "^5.2.0",
@@ -58,6 +55,6 @@
     "coveralls": "^3.0.2",
     "nyc": "^11.9.0",
     "tslint": "^5.12.1",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.4.5"
   }
 }
