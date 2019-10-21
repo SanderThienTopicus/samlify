@@ -32,7 +32,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@authenio/samlify-xsd-schema-validator": "^1.0.2",
     "@authenio/xml-encryption": "^0.11.3",
     "camelcase": "^5.3.1",
     "deflate-js": "^0.2.3",
